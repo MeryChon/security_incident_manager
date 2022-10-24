@@ -13,7 +13,6 @@ class Incident(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=128, choices=[(t.name, t.value) for t in IncidentType])
     description = models.TextField(blank=True)
-    object = models.ForeignKey("IncidentTarget", on_delete=models.PROTECT, help_text="Target of the attack")
     time_creation = models.DateTimeField(default=timezone.now)
 
     @property
@@ -27,9 +26,7 @@ class Incident(models.Model):
 class IncidentTarget(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=128)
-
-    class Meta:
-        db_table = "incident_targets"
+    incidents = models.ManyToManyField(Incident, related_name="objects", db_table="incident_targets")
 
 
 class CommonVulnerabilityExposure(models.Model):
